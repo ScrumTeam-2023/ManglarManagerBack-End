@@ -1,0 +1,2 @@
+//Comunication Controller
+'use strict'

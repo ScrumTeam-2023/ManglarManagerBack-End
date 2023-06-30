@@ -9,10 +9,7 @@ exports.assign = async (req,res) => {
     try {
         let data = req.body;
         let user = await User.findOne({ id: data.user})
- 
         if(!user) return res.status(404).send({message:'Sorry this user does not exist'})
-
-
         let task = new Task(data);
         await task.save();
 
@@ -30,9 +27,9 @@ exports.assign = async (req,res) => {
 
 exports.getTasks = async(req,res) => {
     try {
-        let tasks = await Task.find()
+        let tasks = await Task.find().populate('idUser')
         if(tasks.length === 0) return res.send({message: 'Theres no assigments yet'})
-        return res.send({tasks}).populate()
+        return res.send({tasks})
         
     } catch (err) {
         console.error(err)

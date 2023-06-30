@@ -1,36 +1,36 @@
 'use strict'
 
-'use strict'
-
 const User = require('./user.model')
+const Department = require(`../departments/departments.model`)
 const { validateData , encrypt , checkPassword } = require('../utils/validate')
 const { createToken } = require('../services/jwt')
 
 exports.defaultAdmin = async()=>{
     try {
         let data = {
-            name: 'Daniel Isidoro',
+            name: 'Daniels',
             surname: 'Eustaquio',
-            username:'ADMIN400',
+            username:'ADMINA',
             password: 'admin',
+            email:'Deustaq@gmail.com',
             age: 24,
-            email:'DisidoroEustaquio@gmail.com',
-            role: 'ADMIN'
+            role: 'ADMIN',
+ 
+        }
+        let params = {      
+            password: data.password,
         }
 
-        let params = {      
-          password: data.password,
-      }
+        let validate = validateData(params)
+        if(validate) return res.status(400).send(validate)
 
-      let validate = validateData(params)
-      if(validate) return res.status(400).send(validate)
+        let ExistUser = await User.findOne({username: 'ADMINA'})
+        if(ExistUser) return console.log('Admin already Engaged')
+        data.password = await encrypt(data.password)
+        let defAdmin = new User(data)
+        await defAdmin.save()
+        return console.log(`Admin ${defAdmin} engaged`)
 
-      let ExistUser = await User.findOne({username: 'ADMIN400'})
-      if(ExistUser) return console.log('Admin already Engaged')
-      data.password = await encrypt(data.password)
-      let defAdmin = new User(data)
-      await defAdmin.save()
-      return console.log(`Admin ${defAdmin} engaged`)
 
     
     } catch (err) {
@@ -110,7 +110,7 @@ exports.login = async(req,res)=>{
 
 exports.getUsers = async(req,res) =>{
   try {
-      let getUsers = await User.find({role: 'CLIENT'})
+      let getUsers = await User.find({role: 'EMPLOYEE'}).populate('departament')
       return res.status(200).send({getUsers}) // referenciar en front tambien
       
   } catch (err) {
@@ -124,7 +124,7 @@ exports.getOneUser = async(req,res) =>{
   try {
     
     let userId = req.params.id;
-    let findUser = await User.findOne({_id: userId})
+    let findUser = await User.findOne({_id: userId}).populate('departament')
     if(!findUser) return res.status(404).send({msg:'Sorry We could not find this user'})
 
     return res.status(200).send({findUser})

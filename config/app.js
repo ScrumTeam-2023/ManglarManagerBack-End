@@ -6,6 +6,9 @@ const helmet = require('helmet')
 const cors = require('cors')
 const app = express()
 const port = process.env.PORT || 3000;
+//Rutas Entidades
+const UserRoutes = require('../src/user/user.routes')
+const TaskRoutes = require('../src/task/task.routes')
 
 
 //Entity routes
@@ -16,8 +19,10 @@ app.use(cors())
 app.use(helmet())
 app.use(morgan('dev'))
 
-//Rutas Entidades
 
+//Rutas Entidades
+app.use('/user',UserRoutes)
+app.use('/task',TaskRoutes)
 //servidor
 
 exports.initServer = ()=>{

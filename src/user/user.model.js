@@ -1,34 +1,29 @@
-'use Strict'
-const mongoose = require('mongoose');
+'use strict'
+const mongoose = require('mongoose')
+
 
 const userSchema = mongoose.Schema({
-
     name: {
         type: String,
-        required: true,
+        required: true
     },
-    surname: {
+    surname:{
+        type: String,
+        required: true
+    },
+    username:{
+        type: String,
+        required: true
+    }
+    ,
+    password:{
+        type: String,
+        required: true
+    },
+    email:{
         type: String,
         required: true,
-    },
-    username: {
-        type: String,
-        unique:true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-
-    phone: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true,
+                
     },
     age:{
         type: Number,
@@ -40,20 +35,19 @@ const userSchema = mongoose.Schema({
         }
     }
     ,
-    role: {
+    role:{
         type: String,
-        required: false,
         uppercase: true,
         default: 'EMPLOYEE'
     },
-    department:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Depart',
-        required: true
-    },
+    // idDepartment:{
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Department',
+    //     required: true
+
+    // } wip
 
 
+},{versionKey: false })
 
-},{versionKey : false})
-
-module.exports = mongoose.model(`User`, userSchema)
+module.exports = mongoose.model('User',userSchema)

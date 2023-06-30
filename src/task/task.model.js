@@ -7,17 +7,20 @@ const taskSchema = new mongoose.Schema({
         type: String,
         trim: true,
         //elimina espacios inecesarios
-        required: true
+        required: true,
+        maxLengt: 150
     },
-    complete: {
+    completed: {
         type: Boolean,
         default: false,
     },
 
-    assigned:{
+    idUser:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     }
 
 },{versionKey : false})
+
+module.exports =  mongoose.model('Task',taskSchema)

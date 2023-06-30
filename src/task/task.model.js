@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema({
     desc: {
         type: String,
-        trim: true,
+
         //elimina espacios inecesarios
         required: true,
         maxLengt: 150

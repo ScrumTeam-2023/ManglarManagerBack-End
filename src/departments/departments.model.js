@@ -6,14 +6,16 @@ const depSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
+        upperCase: true,
+        minLength: 3
     },
     
     desc: {
         type: String,
-        required: false,
+        required: true,
     }
 
 
 },{versionKey : false})
 
-module.exports = mongoose.model(`Depart`, userSchema)
+module.exports = mongoose.model(`Depart`, depSchema)

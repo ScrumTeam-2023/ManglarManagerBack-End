@@ -40,12 +40,13 @@ const userSchema = mongoose.Schema({
         uppercase: true,
         default: 'EMPLOYEE'
     },
-    // idDepartment:{
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Department',
-    //     required: true
+    departament:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Depart',
+        required: false,
+        
 
-    // } wip
+    } 
 
 
 },{versionKey: false })

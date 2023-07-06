@@ -10,11 +10,11 @@ exports.WaitingDepartment = async()=>{
             name: 'Waiting',
             desc: 'While an user is Getting assigned to their Respective Department'
         }
-        let existDep = await Department.findOne({name: 'Waiting Department'})
-        if(existDep) return res.status(403).send({message: 'This Department already Engaged'})
+        let existDep = await Department.findOne({name: 'Waiting'})
+        if(existDep) return console.log('The Default Department is now Engaged')
         let defDep = new Department(data)
         await defDep.save()
-        return console.log(`the department is now Engaged`)
+        return console.log(`the department ${defDep}  is now Engaged`)
     } catch (err) {
         console.error(err)
         return err
@@ -82,3 +82,28 @@ exports.deleteDep = async(req,res)=>{
 }
 
 // Dos Gets (Todos,Uno)
+
+exports.getDep = async(req,res)=>{
+    try {
+        let department = await Department.find()
+        if (!department) return res.status(404).send({message: 'Department not found'})
+        return res.send({department})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get Departments'})
+
+        
+    }
+}
+
+exports.getOneDep =async(req,res)=>{
+    try {
+        let depId = req.params.id
+        let findDep = await Department.findOne({_id: depId})
+        if(!findDep) return res.status(404).send({message: 'We could not find this Department'})
+        return res.send({findDep})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get single Departament'})
+    }
+}

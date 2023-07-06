@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 const UserRoutes = require('../src/user/user.routes')
 const TaskRoutes = require('../src/task/task.routes')
 const DepRoutes = require('../src/departments/departments.routes')
-
+const ComplaintRoutes = require('../src/Complaint/Complaint.routes')
 
 //Entity routes
 
@@ -25,6 +25,7 @@ app.use(morgan('dev'))
 app.use('/user',UserRoutes)
 app.use('/task',TaskRoutes)
 app.use('/dep',DepRoutes)
+app.use ('/comp', ComplaintRoutes)
 //servidor
 
 exports.initServer = ()=>{

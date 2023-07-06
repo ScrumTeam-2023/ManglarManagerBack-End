@@ -60,9 +60,6 @@ exports.save = async(req,res) =>{
 
       let user = new User(data)
 
-      //validate Ingeros
-      if(data.ingresos < 100) return res.status(400).send({mgs: 'Sorry This account is Restricted to be Created'})
-
       if(existUser) return res.status(403).send({mgs: 'Sorry this Name is Already Taken'})
       await user.save();
       return res.status(200).send({msg: `The User has Been Created `,user})
@@ -135,7 +132,7 @@ exports.getOneUser = async(req,res) =>{
 
 exports.getProfile =async(req,res)=> {
   try {
-let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
+      let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
       let findToken = await User.findOne({_id: userToken.sub},{password: 0})
       if(!findToken) return res.status(404).send({message: 'Profile not found'})
       return res.send({findToken})

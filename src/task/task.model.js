@@ -10,9 +10,11 @@ const taskSchema = new mongoose.Schema({
         required: true,
         maxLengt: 150
     },
-    completed: {
-        type: Boolean,
-        default: false,
+    status: {
+        type: String,
+        upperCase: true,
+        required: true,
+        default: 'INCOMPLETE',
     },
 
     idUser:{

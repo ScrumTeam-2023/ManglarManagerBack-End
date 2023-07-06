@@ -7,8 +7,16 @@ const { createToken } = require('../services/jwt')
 
 exports.assign = async (req,res) => {
     try {
+        let { status } = req.body
         let data = req.body;
         let user = await User.findOne({ id: data.user})
+       
+
+        if( !status || !(
+            status == 'INCOMPLETE' ||
+            status == 'COMPLETED'))
+        return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
+
         if(!user) return res.status(404).send({message:'Sorry this user does not exist'})
         let task = new Task(data);
         await task.save();
@@ -34,6 +42,65 @@ exports.getTasks = async(req,res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({message: `Error at Getting task`})
+        
+    }
+}
+
+
+// [WIP] //Encontrar Tareas del Usuario Logueado con su token
+exports.getTaskByUser = async(req, res) => {
+    try {
+        let user = req.user
+        let userToken = await User.findOne({_id: req.user.sub})
+        if(!userToken) return res.status(404).send({message:'Rip bozo'})
+
+        let findTask = await Task.findOne({_idUser: userToken})
+        if(!findTask) return res.status(404).send({message:'Could not find Your Tasks'})
+        return res.send({findTask})
+       
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message: `Error at Getting YOUR tasks`})
+        
+    }
+}
+
+exports.updateStatus = async(req,res)=>{
+    try {
+        let { status } = req.body
+        let data = req.body
+        let TaskId = req.params.id
+            
+        let updatedStatus = await Task.findOneAndUpdate(
+            {_id: TaskId},data,{new:true}
+        )
+
+        if( !status || !(
+            status == 'INCOMPLETE' ||
+            status == 'COMPLETED' ||
+            status == ""))
+        return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
+        
+        if(!updatedStatus) return res.status(404).send({message: 'Status now found Nor Updated'})
+        
+        return res.send({message: 'Status Updateds'})
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message:'Error While Updating Status'})
+        
+    }
+}
+
+exports.finishTask = async(req,res) => {
+    try {
+        let taskId = req.params.id
+        let deletedTask = await Task.findOneAndDelete({_id: taskId})
+        if(!deletedTask) return res.status(404).send({message:'Task Not found nor Deleted'})
+
+        return res.status(200).send({message: 'Task Deleted:', deletedTask})
+
+    } catch (err) {
+        console.error(err)
         
     }
 }

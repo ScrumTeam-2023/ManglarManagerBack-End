@@ -9,7 +9,8 @@ const { ensureAuth, isAdmin } = require('../services/authenticated')
 api.post('/saveDep',DepartmentsController.addDep)
 
 //get
-
+api.get(`/getDeps`, DepartmentsController.getDep)
+api.get('/getODep/:id',DepartmentsController.getOneDep)
 
 //Misc
 api.put('/edit/:id',DepartmentsController.editDep)

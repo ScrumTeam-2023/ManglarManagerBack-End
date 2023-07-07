@@ -35,7 +35,7 @@ exports.assign = async (req,res) => {
 
 exports.getTasks = async(req,res) => {
     try {
-        let tasks = await Task.find().populate('idUser')
+        let tasks = await Task.find().populate('idUser',{password:0,role:0})
         if(tasks.length === 0) return res.send({message: 'Theres no assigments yet'})
         return res.send({tasks})
         
@@ -50,12 +50,16 @@ exports.getTasks = async(req,res) => {
 // [WIP] //Encontrar Tareas del Usuario Logueado con su token
 exports.getTaskByUser = async(req, res) => {
     try {
-        let user = req.user
+       
+        //Hallar token
         let userToken = await User.findOne({_id: req.user.sub})
+        console.log(userToken);
         if(!userToken) return res.status(404).send({message:'Rip bozo'})
 
-        let findTask = await Task.findOne({_idUser: userToken})
-        if(!findTask) return res.status(404).send({message:'Could not find Your Tasks'})
+        //encontrar por token encontrado
+        let findTask = await Task.find({idUser: userToken._id}).populate('idUser',{password:0,role:0})
+        if(findTask.length === 0) return res.send({message: 'You Have no assigments yet'})
+       
         return res.send({findTask})
        
     } catch (err) {
@@ -81,9 +85,9 @@ exports.updateStatus = async(req,res)=>{
             status == ""))
         return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
         
-        if(!updatedStatus) return res.status(404).send({message: 'Status now found Nor Updated'})
+        if(!updatedStatus) return res.status(404).send({message: 'Status is Required'})
         
-        return res.send({message: 'Status Updateds'})
+        return res.send({message: 'Status Changed to',updatedStatus})
     } catch (err) {
         console.error(err)
         return res.status(500).send({message:'Error While Updating Status'})

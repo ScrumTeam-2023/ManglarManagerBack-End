@@ -6,20 +6,10 @@ const Complaint = require('./Complaint.model')
 // [WIP]
 exports.makeComplaint = async(req,res)=>{
     try {
-        let data = req.body
-        let time = Math.floor(Date.now() + (1000))
-
-
-
-        if (Complaint.date <= time){  
-
+      
         let comp = new Complaint(data)
         await comp.save()
-        return res.status(200).send({message: 'Your Complaint was sended to Administration'})
-
-        }
-
-        return res.status(401).send({message: 'You have to wait Certain Time to make another Complaint, Please try Later'})
+        return res.status(200).send({message: 'Your Complaint was sended to Administration!'})
 
     } catch (err) {
         console.error(err)

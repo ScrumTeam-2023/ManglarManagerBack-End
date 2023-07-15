@@ -11,18 +11,20 @@ const complaintSchema = mongoose.Schema({
     },
     desc: {
         type: String,
-        minLength: 5,
+        minLength: 3,
         required: true
-    },
-    user: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: false
     },
     date: {
         type: Date,
         default: Date.now(),
         required: false
+    },
+    departament: {
+        //adds department that requires help
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Depart',
+        required: true,
+        
     }
 })
 

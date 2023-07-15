@@ -17,6 +17,13 @@ const taskSchema = new mongoose.Schema({
         default: 'INCOMPLETE',
     },
 
+    date: {
+        type: Date,
+        default: Date.now(),
+        required: false
+
+    },
+
     idUser:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,

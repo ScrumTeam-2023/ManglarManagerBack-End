@@ -10,5 +10,5 @@ const depController = require('./src/departments/departments.controller')
 
 mongoConfig.connect()
 app.initServer();
-userController.defaultAdmin();
 depController.WaitingDepartment();
+userController.defaultAdmin();

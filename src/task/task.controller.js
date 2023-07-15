@@ -2,6 +2,7 @@
 'use strict'
 const Task = require(`../task/task.model`)
 const User = require('../user/user.model')
+const Departament = require('../departments/departments.model')
 const { validateData , encrypt , checkPassword } = require('../utils/validate')
 const { createToken } = require('../services/jwt')
 
@@ -12,10 +13,10 @@ exports.assign = async (req,res) => {
         let user = await User.findOne({ id: data.user})
        
 
-        if( !status || !(
-            status == 'INCOMPLETE' ||
-            status == 'COMPLETED'))
-        return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
+        // if( !status || !(
+        //     status == 'INCOMPLETE' ||
+        //     status == 'COMPLETED'))
+        // return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
 
         if(!user) return res.status(404).send({message:'Sorry this user does not exist'})
         let task = new Task(data);
@@ -35,14 +36,29 @@ exports.assign = async (req,res) => {
 
 exports.getTasks = async(req,res) => {
     try {
-        let tasks = await Task.find().populate('idUser',{password:0,role:0})
-        if(tasks.length === 0) return res.send({message: 'Theres no assigments yet'})
-        return res.send({tasks})
+        let gettasks = await Task.find().populate('idUser',{password:0,role:0});
+        if(gettasks.length === 0) return res.send({message: 'Theres no assigments yet'})
+        return res.send({gettasks})
         
     } catch (err) {
         console.error(err)
         return res.status(500).send({message: `Error at Getting task`})
         
+    }
+}
+
+exports.getSingleTask = async(req,res)=>{
+    try {
+        let taskId = req.params.id;
+        let findSTask = await Task.findOne({_id: taskId}).populate('idUser',{password:0,role:0})
+        if(findSTask.length === 0) return res.send({message: 'You Have no assigments yet'})
+        if(!findSTask) return res.status(404).send({message:'This task does not exist'})
+
+        return res.send({findSTask})
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message: `Error at Getting task`})
     }
 }
 
@@ -72,18 +88,17 @@ exports.getTaskByUser = async(req, res) => {
 exports.updateStatus = async(req,res)=>{
     try {
         let { status } = req.body
-        let data = req.body
-        let TaskId = req.params.id
-            
-        let updatedStatus = await Task.findOneAndUpdate(
-            {_id: TaskId},data,{new:true}
-        )
 
+        let TaskId = req.params.id;
+            
         if( !status || !(
             status == 'INCOMPLETE' ||
-            status == 'COMPLETED' ||
-            status == ""))
-        return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETE or INCOMPLETE in Uppercase'})
+            status == 'COMPLETED')) return res.status(400).send({message: 'Invalid Status Values \n You MUST include COMPETED or INCOMPLETE in Uppercase'})
+       
+
+        let updatedStatus = await Task.findOneAndUpdate(
+            {_id: TaskId}, { status: status },{new:true}
+        )
         
         if(!updatedStatus) return res.status(404).send({message: 'Status is Required'})
         

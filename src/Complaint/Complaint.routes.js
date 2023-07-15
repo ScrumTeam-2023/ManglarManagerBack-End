@@ -7,9 +7,9 @@ const {ensureAuth, isAdmin } = require('../services/authenticated')
 
 
 //Post
-api.post('/addComp',ComplaintController.makeComplaint)
+api.post('/addComp',ensureAuth,ComplaintController.makeComplaint)
 //Get
-api.get('/getComp',ComplaintController.getComplaints)
+api.get('/getComp',ensureAuth,ComplaintController.getComplaints)
 //Delete
 api.delete('/delComp/:id',ComplaintController.removeComplaint)
 

@@ -6,7 +6,7 @@ const Complaint = require('./Complaint.model')
 // [WIP]
 exports.makeComplaint = async(req,res)=>{
     try {
-      
+        let data = req.body
         let comp = new Complaint(data)
         await comp.save()
         return res.status(200).send({message: 'Your Complaint was sended to Administration!'})
@@ -20,8 +20,8 @@ exports.makeComplaint = async(req,res)=>{
 
 exports.getComplaints = async(req,res)=>{
     try {
-        let getComp = await Complaint.find().populate('user')
-        if(tasks.length === 0) return res.send({message: 'Theres no assigments yet'})
+        let getComp = await Complaint.find()
+        if(getComp.length === 0) return res.send({message: 'Theres any Complaint made...'})
         return res.status(200).send({getComp})
     } catch (err) {
         console.error(err)

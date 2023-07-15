@@ -7,16 +7,17 @@ const UserController = require('../user/user.controller')
 const {ensureAuth, isAdmin } = require('../services/authenticated')
 
 ///Posts
-api.post('/save', UserController.save)
+api.post('/save',[ensureAuth, isAdmin], UserController.save)
 api.post('/login',UserController.login)
 
 //Gets
-api.get('/get',UserController.getUsers)
-api.get('/getOne',UserController.getOneUser)
-api.get('/getProfile',UserController.getProfile)
+api.get('/get',ensureAuth,UserController.getUsers)
+api.get('/getOne/:id',ensureAuth,UserController.getOneUser)
+api.get('/getProfile',ensureAuth,UserController.getProfile)
 
 //Miscellaneous
-api.delete('/delete/:id',UserController.delete)
-api.put('/update/:id',UserController.editUser)
+api.delete('/delete/:id',[ensureAuth, isAdmin],UserController.delete)
+api.put('/update/:id',[ensureAuth, isAdmin],UserController.editUser)
+api.put('/updateProfile/:id',ensureAuth,UserController.editProfile)
 
 module.exports = api

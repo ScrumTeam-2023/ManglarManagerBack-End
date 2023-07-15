@@ -7,10 +7,10 @@ const {createToken} = require('../services/jwt')
 exports.WaitingDepartment = async()=>{
     try {
         let data = {
-            name: 'Waiting',
+            name: 'ON HOLD',
             desc: 'While an user is Getting assigned to their Respective Department'
         }
-        let existDep = await Department.findOne({name: 'Waiting'})
+        let existDep = await Department.findOne({name: 'ON HOLD'})
         if(existDep) return console.log('The Default Department is now Engaged')
         let defDep = new Department(data)
         await defDep.save()

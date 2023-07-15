@@ -1,5 +1,6 @@
 'use strict'
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
 
 
 const userSchema = mongoose.Schema({
@@ -7,48 +8,59 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    surname:{
+    surname: {
         type: String,
         required: true
     },
-    username:{
-        type: String,
-        required: true
-    }
-    ,
-    password:{
-        type: String,
-        required: true
-    },
-    email:{
+    username: {
         type: String,
         required: true,
-                
+        unique: true
+    }
+    ,
+    password: {
+        type: String,
+        required: true
     },
-    age:{
+    email: {
+        type: String,
+        required: true,
+        unique: true
+
+    },
+    phone: {
+        type: String,
+        required: true,
+        unique: true
+        
+
+
+    },
+
+    age: {
         type: Number,
         default: 0,
         validate(value) {
-          if (value < 15) {
-            throw new Error("Age Cannot be 15 or Below");
-          }
+            if (value < 15) {
+                throw new Error("Age Cannot be 15 or Below");
+            }
         }
     }
     ,
-    role:{
+    role: {
         type: String,
         uppercase: true,
         default: 'EMPLOYEE'
     },
-    departament:{
+    departament: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Depart',
         required: false,
-        
-
-    } 
 
 
-},{versionKey: false })
+    }
 
-module.exports = mongoose.model('User',userSchema)
+
+}, { versionKey: false })
+
+module.exports = mongoose.model('User', userSchema)

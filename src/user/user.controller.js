@@ -6,15 +6,20 @@ const { validateData , encrypt , checkPassword } = require('../utils/validate')
 const { createToken } = require('../services/jwt')
 
 exports.defaultAdmin = async()=>{
+    
+    
+
     try {
         let data = {
             name: 'Daniels',
             surname: 'Eustaquio',
             username:'ADMINA',
             password: 'admin',
+            phone: '1234-1314',
             email:'Deustaq@gmail.com',
             age: 24,
             role: 'ADMIN',
+            departament: '64b20df327252397c58043a0'
  
         }
         let params = {      
@@ -61,6 +66,7 @@ exports.save = async(req,res) =>{
       let user = new User(data)
 
       if(existUser) return res.status(403).send({mgs: 'Sorry this Name is Already Taken'})
+      if(data.age < 15) return res.status(403).send({mgs: 'Sorry this Person is not Ready to work'})
       await user.save();
       return res.status(200).send({msg: `The User has Been Created `,user})
   } catch (err) {
@@ -84,11 +90,12 @@ exports.login = async(req,res)=>{
       
       if(user && await checkPassword(data.password, user.password)) {
           let userLogged = {
+            //Obtiene los datos a Mostrar cuando un usario loguea
+
               name: user.name,
               surname: user.surname,
               username: user.username,
               role: user.role,
-              AccNo: user.AccNo,
               phone: user.phone,
               email: user.email
           }
@@ -107,7 +114,7 @@ exports.login = async(req,res)=>{
 
 exports.getUsers = async(req,res) =>{
   try {
-      let getUsers = await User.find({role: 'EMPLOYEE'}).populate('departament')
+      let getUsers = await User.find({role: 'EMPLOYEE'}).populate('departament',{password:0})
       return res.status(200).send({getUsers}) // referenciar en front tambien
       
   } catch (err) {
@@ -121,7 +128,7 @@ exports.getOneUser = async(req,res) =>{
   try {
     
     let userId = req.params.id;
-    let findUser = await User.findOne({_id: userId}).populate('departament')
+    let findUser = await User.findOne({_id: userId}).populate('departament',{password:0})
     if(!findUser) return res.status(404).send({msg:'Sorry We could not find this user'})
 
     return res.status(200).send({findUser})
@@ -129,6 +136,7 @@ exports.getOneUser = async(req,res) =>{
       return res.status(500).send({msg:'Error At get One User',err})  
   }
 }
+
 
 exports.getProfile =async(req,res)=> {
   try {
@@ -149,7 +157,6 @@ exports.getProfile =async(req,res)=> {
 exports.editUser = async(req,res) =>{
   try {
       let userId = req.params.id;
-      let token = req.user.sub;
       let data = req.body
     //  if(userId != token) return res.status(500).send({message: "No tienes permiso para realizar esta accion"})
       if(data.password || Object.entries(data).length === 0 || data.DPI) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
@@ -175,7 +182,6 @@ exports.editProfile = async(req,res) =>{
       let userId = req.params.id;
       let token = req.user.sub;
       let data = req.body
-      if(data.password || data.DPI || Object.entries(data).length === 0) return res.status(400).send({ message: "Some fields cannot be sign"})
       let userUpdated = await User.findOneAndUpdate(
           {_id: token},
           data,{new:true}
@@ -193,16 +199,14 @@ exports.editProfile = async(req,res) =>{
 
 exports.delete = async(req,res) =>{
   try {
-      let idUser = req.params.id;
+    let idUser = req.params.id;
+    let defaultAdmin = await User.findOne({username: 'ADMINA'})
+    if(defaultAdmin._id === idUser) return res.status(400).send({msg:'Cannot delete Administrator'});
 
-      let defaultAdmin = await User.findOne({username: 'ADMINB'})
-      if(defaultAdmin._id == idUser) return res.status(400).send({msg:'Cannot delete Administrator'});
-
-      let userDeleted = await User.findOneAndDelete({_id: idUser})
-      if (!userDeleted) return res.status(404).send({msg:'Sorry We could not find this user nor Deleting it'});
-
-          return res.status(200).send({userDeleted});
+    let userDeleted = await User.findOneAndDelete({_id: idUser})
+    if (!userDeleted) return res.status(404).send({msg:'Sorry We could not find this user nor Deleting it'});
+        return res.status(200).send({userDeleted});
   } catch (err) {
-      return res.status(500).send({msg:'Error At Deleting One User',err})  
+      return res.status(500).send({msg:'Error At Deleting One User', err})  
   }
 }

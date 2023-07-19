@@ -28,10 +28,19 @@ const userSchema = mongoose.Schema({
         unique: true
 
     },
+
+    DPI: {
+        type: String,
+        required: true,
+        unique: true,
+        minLength: 8
+    }
+    ,
     phone: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        minLength: 8
         
 
 

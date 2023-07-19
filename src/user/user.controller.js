@@ -29,6 +29,8 @@ exports.defaultAdmin = async()=>{
         let validate = validateData(params)
         if(validate) return res.status(400).send(validate)
 
+        
+
         let ExistUser = await User.findOne({username: 'ADMINA'})
         if(ExistUser) return console.log('Admin already Engaged')
         data.password = await encrypt(data.password)
@@ -67,6 +69,7 @@ exports.save = async(req,res) =>{
 
       if(existUser) return res.status(403).send({mgs: 'Sorry this Name is Already Taken'})
       if(data.age < 15) return res.status(403).send({mgs: 'Sorry this Person is not Ready to work'})
+      
       await user.save();
       return res.status(200).send({msg: `The User has Been Created `,user})
   } catch (err) {

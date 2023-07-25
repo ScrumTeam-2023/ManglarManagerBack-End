@@ -19,7 +19,9 @@ exports.defaultAdmin = async()=>{
             email:'Deustaq@gmail.com',
             age: 24,
             role: 'ADMIN',
-            departament: '64b20df327252397c58043a0'
+            departament: '64b20df327252397c58043a0',
+            DPI: '12349251 0101'
+
  
         }
         let params = {      

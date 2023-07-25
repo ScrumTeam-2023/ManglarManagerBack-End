@@ -19,7 +19,8 @@ exports.defaultAdmin = async()=>{
             email:'Deustaq@gmail.com',
             age: 24,
             role: 'ADMIN',
-            departament: '64b20df327252397c58043a0'
+            departament: '64b20df327252397c58043a0',
+            DPI: '12349251 0101'
  
         }
         let params = {      
@@ -28,6 +29,8 @@ exports.defaultAdmin = async()=>{
 
         let validate = validateData(params)
         if(validate) return res.status(400).send(validate)
+
+        
 
         let ExistUser = await User.findOne({username: 'ADMINA'})
         if(ExistUser) return console.log('Admin already Engaged')
@@ -54,7 +57,6 @@ exports.defaultAdmin = async()=>{
 exports.save = async(req,res) =>{
   try {
       let data = req.body;
-      let dataUser = await User.findOne({_id: data.user})
       let existUser = await User.findOne({name: data.name})
       let params = {
           password: data.password
@@ -67,6 +69,7 @@ exports.save = async(req,res) =>{
 
       if(existUser) return res.status(403).send({mgs: 'Sorry this Name is Already Taken'})
       if(data.age < 15) return res.status(403).send({mgs: 'Sorry this Person is not Ready to work'})
+      
       await user.save();
       return res.status(200).send({msg: `The User has Been Created `,user})
   } catch (err) {
@@ -141,7 +144,8 @@ exports.getOneUser = async(req,res) =>{
 exports.getProfile =async(req,res)=> {
   try {
       let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
-      let findToken = await User.findOne({_id: userToken.sub},{password: 0})
+      let findToken = await User.findOne({_id: userToken.sub})
+    //   .populate('departament',{password: 0})
       if(!findToken) return res.status(404).send({message: 'Profile not found'})
       return res.send({findToken})
   } catch (err) {
@@ -158,8 +162,7 @@ exports.editUser = async(req,res) =>{
   try {
       let userId = req.params.id;
       let data = req.body
-    //  if(userId != token) return res.status(500).send({message: "No tienes permiso para realizar esta accion"})
-      if(data.password || Object.entries(data).length === 0 || data.DPI) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
+      if(data.password || Object.entries(data).length === 0) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
       let userUpdated = await User.findOneAndUpdate(
           {_id: userId},
           data,

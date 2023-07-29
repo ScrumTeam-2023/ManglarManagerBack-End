@@ -144,7 +144,7 @@ exports.getOneUser = async(req,res) =>{
 exports.getProfile =async(req,res)=> {
   try {
       let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
-      let findToken = await User.findOne({_id: userToken.sub})
+      let findToken = await User.findOne({_id: userToken.sub}).populate('departament')
     //   .populate('departament',{password: 0})
       if(!findToken) return res.status(404).send({message: 'Profile not found'})
       return res.send({findToken})

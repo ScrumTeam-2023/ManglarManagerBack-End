@@ -63,11 +63,11 @@ exports.editDep = async(req,res)=>{
 exports.deleteDep = async(req,res)=>{
     try {
         let departmentId = req.params.id
-        let waitingDep = await Department.findOne({name: 'Waiting Department'})
+        let waitingDep = await Department.findOne({name: 'ON HOLD'})
         if(waitingDep._id == departmentId) return res.status(404).send({message: 'The Waiting Department cannot be deleted'})
             await User.updateMany(
-                {department: departmentId},
-                {department: waitingDep._id}
+                {departament: departmentId},
+                {departament: waitingDep._id}
             );
 
             let deletedDep = await Department.findOneAndDelete({_id: departmentId})

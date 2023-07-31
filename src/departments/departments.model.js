@@ -13,6 +13,8 @@ const depSchema = mongoose.Schema({
     desc: {
         type: String,
         required: true,
+        maxLength: 50,
+        minLength: 2
     }
 
 

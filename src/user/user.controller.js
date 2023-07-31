@@ -58,7 +58,6 @@ exports.defaultAdmin = async()=>{
 exports.save = async(req,res) =>{
   try {
       let data = req.body;
-      let dataUser = await User.findOne({_id: data.user})
       let existUser = await User.findOne({name: data.name})
       let params = {
           password: data.password
@@ -146,7 +145,8 @@ exports.getOneUser = async(req,res) =>{
 exports.getProfile =async(req,res)=> {
   try {
       let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
-      let findToken = await User.findOne({_id: userToken.sub},{password: 0})
+      let findToken = await User.findOne({_id: userToken.sub}).populate('departament')
+    //   .populate('departament',{password: 0})
       if(!findToken) return res.status(404).send({message: 'Profile not found'})
       return res.send({findToken})
   } catch (err) {
@@ -163,8 +163,7 @@ exports.editUser = async(req,res) =>{
   try {
       let userId = req.params.id;
       let data = req.body
-    //  if(userId != token) return res.status(500).send({message: "No tienes permiso para realizar esta accion"})
-      if(data.password || Object.entries(data).length === 0 || data.DPI) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
+      if(data.password || Object.entries(data).length === 0) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
       let userUpdated = await User.findOneAndUpdate(
           {_id: userId},
           data,

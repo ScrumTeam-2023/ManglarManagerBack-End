@@ -21,7 +21,6 @@ exports.defaultAdmin = async()=>{
             role: 'ADMIN',
             departament: '64b20df327252397c58043a0',
             DPI: '12349251 0101'
-
  
         }
         let params = {      
@@ -214,3 +213,36 @@ exports.delete = async(req,res) =>{
       return res.status(500).send({msg:'Error At Deleting One User', err})  
   }
 }
+
+//CHAT GET
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    // Obtener el usuario logueado desde el middleware de autenticación
+    const currentUser = req.user;
+
+    if (currentUser.departament === 'ON HOLD') {
+      // Si el usuario logueado pertenece al departamento "ON HOLD", no se mostrará ningún usuario
+      return res.status(200).send({ getUsers: [] });
+    }
+
+    let getUsers;
+
+    if (currentUser.role === 'ADMIN') {
+      // Si el usuario logueado es ADMIN, muestra todos los usuarios excepto el usuario logueado
+      getUsers = await User.find({ _id: { $ne: currentUser._id } }).populate('departament', { password: 0 });
+    } else if (currentUser.role === 'EMPLOYEE') {
+      // Si el usuario logueado es EMPLOYEE, muestra solo los usuarios del mismo departamento y el usuario con rol ADMIN excepto el usuario logueado
+      getUsers = await User.find({ $or: [{ role: 'ADMIN' }, { departament: currentUser.departament }] }).populate('departament', { password: 0 });
+    }
+
+    // Filtrar el usuario logueado de la lista de usuarios
+    getUsers = getUsers.filter((user) => !user._id.equals(currentUser._id));
+
+    return res.status(200).send({ getUsers });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ msg: 'Whops! Something went wrong trying to get all users!' });
+  }
+};
+

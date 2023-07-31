@@ -14,6 +14,7 @@ api.post('/login',UserController.login)
 api.get('/get',ensureAuth,UserController.getUsers)
 api.get('/getOne/:id',ensureAuth,UserController.getOneUser)
 api.get('/getProfile',ensureAuth,UserController.getProfile)
+api.get('/todos',ensureAuth,UserController.getAllUsers)
 
 //Miscellaneous
 api.delete('/delete/:id',[ensureAuth, isAdmin],UserController.delete)

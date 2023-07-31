@@ -6,11 +6,11 @@ const DepartmentsController = require('../departments/departments.controller')
 const { ensureAuth, isAdmin } = require('../services/authenticated')
 
 //Post
-api.post('/saveDep',[ensureAuth , isAdmin],DepartmentsController.addDep)
+api.post('/saveDep',ensureAuth,DepartmentsController.addDep)
 
 //get
 api.get(`/getDeps`,DepartmentsController.getDep)
-api.get('/getODep/:id',DepartmentsController.getOneDep)
+api.get('/getODep/:id',ensureAuth,DepartmentsController.getOneDep)
 
 //Misc
 api.put('/edit/:id',ensureAuth,DepartmentsController.editDep)

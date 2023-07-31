@@ -80,6 +80,32 @@ exports.deleteDep = async(req,res)=>{
         
     }
 }
+// Dos Gets (Todos,Uno)
+
+exports.getDep = async(req,res)=>{
+    try {
+        let department = await Department.find()
+        if (!department) return res.status(404).send({message: 'Department not found'})
+        return res.send({department})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get Departments'})
+
+        
+    }
+}
+
+exports.getOneDep =async(req,res)=>{
+    try {
+        let depId = req.params.id
+        let findDep = await Department.findOne({_id: depId})
+        if(!findDep) return res.status(404).send({message: 'We could not find this Department'})
+        return res.send({findDep})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get single Departament'})
+    }
+}
 
 // Dos Gets (Todos,Uno)
 

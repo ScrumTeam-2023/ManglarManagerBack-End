@@ -9,6 +9,7 @@ const userController = require('./src/user/user.controller')
 const depController = require('./src/departments/departments.controller')
 const sanityOfComplainment = require('./src/Complaint/Complaint.controller')
 
+
 mongoConfig.connect()
 app.initServer();
 depController.WaitingDepartment();

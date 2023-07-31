@@ -63,11 +63,11 @@ exports.editDep = async(req,res)=>{
 exports.deleteDep = async(req,res)=>{
     try {
         let departmentId = req.params.id
-        let waitingDep = await Department.findOne({name: 'Waiting Department'})
+        let waitingDep = await Department.findOne({name: 'ON HOLD'})
         if(waitingDep._id == departmentId) return res.status(404).send({message: 'The Waiting Department cannot be deleted'})
             await User.updateMany(
-                {department: departmentId},
-                {department: waitingDep._id}
+                {departament: departmentId},
+                {departament: waitingDep._id}
             );
 
             let deletedDep = await Department.findOneAndDelete({_id: departmentId})
@@ -78,6 +78,32 @@ exports.deleteDep = async(req,res)=>{
         console.log(err)
         return res.status(500).send({message: 'Error trying to delete Department'})
         
+    }
+}
+// Dos Gets (Todos,Uno)
+
+exports.getDep = async(req,res)=>{
+    try {
+        let department = await Department.find()
+        if (!department) return res.status(404).send({message: 'Department not found'})
+        return res.send({department})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get Departments'})
+
+        
+    }
+}
+
+exports.getOneDep =async(req,res)=>{
+    try {
+        let depId = req.params.id
+        let findDep = await Department.findOne({_id: depId})
+        if(!findDep) return res.status(404).send({message: 'We could not find this Department'})
+        return res.send({findDep})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send({message: 'Error trying to get single Departament'})
     }
 }
 

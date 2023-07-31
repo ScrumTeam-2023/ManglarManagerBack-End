@@ -23,7 +23,7 @@ const complaintSchema = mongoose.Schema({
         //adds department that requires help
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Depart',
-        required: true,
+        required: false,
         
     }
 })

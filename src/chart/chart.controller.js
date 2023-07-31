@@ -1,2 +1,0 @@
-//Ganancias
-'use strict'

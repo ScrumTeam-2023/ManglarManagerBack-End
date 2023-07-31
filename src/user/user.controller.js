@@ -21,7 +21,6 @@ exports.defaultAdmin = async()=>{
             role: 'ADMIN',
             departament: '64b20df327252397c58043a0',
             DPI: '12349251 0101'
-
  
         }
         let params = {      
@@ -58,7 +57,6 @@ exports.defaultAdmin = async()=>{
 exports.save = async(req,res) =>{
   try {
       let data = req.body;
-      let dataUser = await User.findOne({_id: data.user})
       let existUser = await User.findOne({name: data.name})
       let params = {
           password: data.password
@@ -146,7 +144,8 @@ exports.getOneUser = async(req,res) =>{
 exports.getProfile =async(req,res)=> {
   try {
       let userToken = req.user                                        //ocultar cualquier dato 1 mostrar / 0 No mostrar
-      let findToken = await User.findOne({_id: userToken.sub},{password: 0})
+      let findToken = await User.findOne({_id: userToken.sub}).populate('departament')
+    //   .populate('departament',{password: 0})
       if(!findToken) return res.status(404).send({message: 'Profile not found'})
       return res.send({findToken})
   } catch (err) {
@@ -163,8 +162,7 @@ exports.editUser = async(req,res) =>{
   try {
       let userId = req.params.id;
       let data = req.body
-    //  if(userId != token) return res.status(500).send({message: "No tienes permiso para realizar esta accion"})
-      if(data.password || Object.entries(data).length === 0 || data.DPI) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
+      if(data.password || Object.entries(data).length === 0) return res.status(400).send({message: 'Have submitted some data that cannot be updated'});
       let userUpdated = await User.findOneAndUpdate(
           {_id: userId},
           data,
@@ -215,3 +213,36 @@ exports.delete = async(req,res) =>{
       return res.status(500).send({msg:'Error At Deleting One User', err})  
   }
 }
+
+//CHAT GET
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    // Obtener el usuario logueado desde el middleware de autenticación
+    const currentUser = req.user;
+
+    if (currentUser.departament === 'ON HOLD') {
+      // Si el usuario logueado pertenece al departamento "ON HOLD", no se mostrará ningún usuario
+      return res.status(200).send({ getUsers: [] });
+    }
+
+    let getUsers;
+
+    if (currentUser.role === 'ADMIN') {
+      // Si el usuario logueado es ADMIN, muestra todos los usuarios excepto el usuario logueado
+      getUsers = await User.find({ _id: { $ne: currentUser._id } }).populate('departament', { password: 0 });
+    } else if (currentUser.role === 'EMPLOYEE') {
+      // Si el usuario logueado es EMPLOYEE, muestra solo los usuarios del mismo departamento y el usuario con rol ADMIN excepto el usuario logueado
+      getUsers = await User.find({ $or: [{ role: 'ADMIN' }, { departament: currentUser.departament }] }).populate('departament', { password: 0 });
+    }
+
+    // Filtrar el usuario logueado de la lista de usuarios
+    getUsers = getUsers.filter((user) => !user._id.equals(currentUser._id));
+
+    return res.status(200).send({ getUsers });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ msg: 'Whops! Something went wrong trying to get all users!' });
+  }
+};
+

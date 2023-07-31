@@ -1,2 +1,0 @@
-//Comunication model
-'use strict'
